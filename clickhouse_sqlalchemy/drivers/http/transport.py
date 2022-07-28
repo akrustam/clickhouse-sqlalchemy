@@ -12,7 +12,6 @@ from ...exceptions import DatabaseException
 from .exceptions import HTTPException
 from .utils import parse_tsv
 
-
 DEFAULT_DDL_TIMEOUT = None
 DATE_NULL = '0000-00-00'
 DATETIME_NULL = '0000-00-00 00:00:00'
@@ -167,9 +166,14 @@ class RequestsTransport(object):
         params['database'] = self.db_name
         params.update(self.ch_settings)
 
+        if self.auth == (None, None):
+            auth = False
+        else:
+            auth = self.auth
+            
         # TODO: retries, prepared requests
         r = self.http.post(
-            self.db_url, auth=self.auth, params=params, data=data,
+            self.db_url, auth=auth, params=params, data=data,
             stream=stream, timeout=self.timeout, headers=self.headers,
             verify=self.verify, cert=self.cert
         )
